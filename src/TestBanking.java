@@ -1,32 +1,41 @@
-import banking.*;
+/*
+ * This class creates the program to test the banking classes.
+ * It creates a set of customers, with a few accounts each,
+ * and generates a report of current account balances.
+ */
+
+import banking.domain.*;
+import banking.reports.CustomerReport;
+
 public class TestBanking {
-    public static void main(String[] args) {
-        Customer customer;
-        Account  account;
-        // Create an account that can has a 500.00 balance.
-        System.out.println("Creating the customer Jane Smith.");
-        customer = new Customer("Jane", "Smith");
-        System.out.println("Creating her account with a 500.00 balance.");
-        customer.setAccount(new Account(500.00));
-        account = customer.getAccount();
 
-        System.out.println("Withdraw 150.00");
-        account.withdraw(150.00);
+  public static void main(String[] args) {
+    Bank     bank = Bank.getBank();
+    Customer customer;
+    CustomerReport report = new CustomerReport();
 
-        System.out.println("Deposit 22.50");
-        account.deposit(22.50);
+    // Create several customers and their accounts
+    bank.addCustomer("Jane", "Simms");
+    customer = bank.getCustomer(0);
+    customer.addAccount(new SavingsAccount(500.00, 0.05));
+    customer.addAccount(new CheckingAccount(200.00, 400.00));
 
-        System.out.println("Withdraw 47.62");
-        account.withdraw(47.62);
-        // Perform some account transactions
-        System.out.println("Withdraw 150.00: " + account.withdraw(150.00));
-        System.out.println("Deposit 22.50: " + account.deposit(22.50));
-        System.out.println("Withdraw 47.62: " + account.withdraw(47.62));
-        System.out.println("Withdraw 400.00: " + account.withdraw(400.00));
+    bank.addCustomer("Owen", "Bryant");
+    customer = bank.getCustomer(1);
+    customer.addAccount(new CheckingAccount(200.00));
 
-        // Print out the final account balance
-        System.out.println("Customer [" + customer.getLastName()
-                + ", " + customer.getFirstName()
-                + "] has a balance of " + account.getBalance());
-    }
+    bank.addCustomer("Tim", "Soley");
+    customer = bank.getCustomer(2);
+    customer.addAccount(new SavingsAccount(1500.00, 0.05));
+    customer.addAccount(new CheckingAccount(200.00));
+
+    bank.addCustomer("Maria", "Soley");
+    customer = bank.getCustomer(3);
+    // Maria and Tim have a shared checking account
+    customer.addAccount(bank.getCustomer(2).getAccount(1));
+    customer.addAccount(new SavingsAccount(150.00, 0.05));
+
+    // Generate a report
+    report.generateReport();
+  }
 }
